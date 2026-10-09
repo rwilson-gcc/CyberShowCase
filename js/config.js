@@ -1,5 +1,5 @@
 /* ---- Edit these to rebrand and retime the demo ---- */
-const BRAND={name:"Your College Name",unit:"Computing & Cybersecurity",accent:"#f2b705"};
+const BRAND={name:"Glasgow Clyde College",unit:"Computing & Cybersecurity",accent:"#f2b705"};
 const AUTO_SECONDS=25;
 
 const MITRE=[["recon","Reconnaissance"],["resdev","Resource Dev"],["initial","Initial Access"],["exec","Execution"],["persist","Persistence"],["privesc","Priv Escalation"],["evasion","Defence Evasion"],["cred","Credential Access"],["disc","Discovery"],["lateral","Lateral Movement"],["collect","Collection"],["exfil","Exfiltration"]];
