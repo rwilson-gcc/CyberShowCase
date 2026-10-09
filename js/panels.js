@@ -80,6 +80,44 @@ const Exfil=(()=>{
   return{show,run,set,fail,reset};
 })();
 
+const SQLi=(()=>{
+  let gen=0;
+  function reset(){
+    gen++;
+    $('sqliUser').value='';$('sqliPass').value='';
+    $('loginMsg').textContent='';$('loginMsg').classList.remove('bad');
+    $('adminPanel').classList.add('hidden');
+    $('loginForm').classList.remove('hidden');
+  }
+  function type(g,el,text,cb){
+    let i=0;el.value='';
+    (function step(){
+      if(g!==gen)return;
+      el.value+=text[i]||'';i++;
+      if(i<=text.length)setTimeout(step,45);else cb&&cb();
+    })();
+  }
+  function run(){
+    reset();const g=gen;
+    setTimeout(()=>{if(g!==gen)return;type(g,$('sqliUser'),'admin',()=>{
+      setTimeout(()=>{if(g!==gen)return;type(g,$('sqliPass'),"' OR '1'='1' -- ",()=>{
+        setTimeout(()=>{
+          if(g!==gen)return;
+          $('loginMsg').textContent='Authenticating...';
+          setTimeout(()=>{
+            if(g!==gen)return;
+            $('loginMsg').textContent='Login query returned a row — authentication bypassed.';
+            $('loginMsg').classList.add('bad');
+            $('loginForm').classList.add('hidden');
+            $('adminPanel').classList.remove('hidden');
+          },1200);
+        },500);
+      })},400);
+    })},700);
+  }
+  return{run,reset};
+})();
+
 const Alarm={
   beep(){
     try{
