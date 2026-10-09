@@ -52,6 +52,23 @@ button:hover:not(:disabled){border-color:var(--acc)}button:disabled{opacity:.4;c
 .bar{flex:1;height:16px;background:#000;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:#ff4d5e;transition:background .4s}.bar i.fail{background:#ff9800;animation:blink .5s infinite}
 @keyframes blink{50%{opacity:.4}}
+/* sqli */
+.browser{background:#1b1e22;border-radius:8px;overflow:hidden;border:1px solid #333;max-width:520px;margin:10px auto}
+.browser-bar{display:flex;align-items:center;gap:6px;padding:8px 10px;background:#26292e}
+.browser-bar .dot{width:10px;height:10px;border-radius:50%;background:#555}
+.browser-bar .url{margin-left:10px;flex:1;background:#111;color:#9ab;font-family:var(--mono);font-size:.78rem;padding:4px 8px;border-radius:4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.browser-body{background:#f3f4f6;color:#222;padding:22px}
+.loginform{display:flex;flex-direction:column;gap:10px;max-width:260px;margin:0 auto}
+.loginform h4{margin:0 0 4px;text-align:center;color:#222}
+.loginform label{font-size:.78rem;color:#555;display:flex;flex-direction:column;gap:3px}
+.loginform input{font-family:var(--mono);padding:7px 8px;border:1px solid #bbb;border-radius:4px;font-size:.85rem;background:#fff;color:#111}
+.loginbtn{padding:8px;border:none;border-radius:4px;background:#2563eb;color:#fff;font-weight:600;cursor:default}
+.loginmsg{min-height:1.4em;font-size:.8rem;text-align:center;color:#555}
+.loginmsg.bad{color:#c62828;font-weight:600}
+.adminpanel{max-width:320px;margin:0 auto;text-align:left}
+.adminpanel h4{color:#15803d;margin:0 0 8px}
+.adminpanel ul{margin:0 0 10px;padding-left:18px;color:#333;font-size:.85rem}
+.flagbox{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:6px;padding:8px 10px;font-size:.78rem;font-weight:600}
 /* siem */
 .siem{background:#101418;border:1px solid #333;border-radius:8px;padding:10px}
 .siem-bar{display:flex;gap:10px;align-items:center;border-bottom:1px solid #333;padding-bottom:8px}.siem-bar b{color:#65a637}.siem-bar span{color:#aab}
@@ -78,6 +95,7 @@ button:hover:not(:disabled){border-color:var(--acc)}button:disabled{opacity:.4;c
 #timeline{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:6px 20px 22px}
 .step{width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.35);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:.4s}
 .step.done{background:var(--line)}.step.active{background:var(--acc);color:#000;font-weight:700;transform:scale(1.2)}
+.step.clickable{cursor:pointer}.step.clickable:hover{border-color:var(--acc);transform:scale(1.1)}
 /* effects */
 body.flash{animation:alarm .7s infinite}@keyframes alarm{50%{background:#7a0010}}
 .glitch #terminal,.glitch #stageTitle h2{animation:g .15s infinite}@keyframes g{25%{transform:translate(-2px)}75%{transform:translate(2px)}}
