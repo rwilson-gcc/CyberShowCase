@@ -24,6 +24,10 @@ const STAGES=[
 {title:"Initial Access",team:"red-team",scene:"network",host:"pentester@kali:~$",sub:"Credentials obtained, privileges escalated",mitre:["initial","cred","privesc"],score:[1,0],path:ATTACK_PATH,traffic:"attack",
  lines:[{t:"VPN access obtained with phished credentials.",cls:"warn"},{host:"WEB01",t:"whoami -> svc_web",d:500},{host:"WEB01",t:"exploit/local/priv_esc ... SYSTEM",cls:"bad",d:500},{host:"FILE01",t:"dumping cached credentials...",d:500},{host:"FILE01",t:"[+] domain admin hash recovered",cls:"bad",d:500},{host:"DB01",t:"login as svc_sql ... success",cls:"bad"}]},
 
+{title:"Web Exploitation",team:"red-team",scene:"sqli",host:"pentester@kali:~$",sub:"A simple SQL injection bypasses the WEB01 admin login",mitre:["initial","cred"],score:[1,0],
+ act(){SQLi.run()},
+ lines:[{t:"$ curl -s http://intranet.northbridge-holdings.example/admin/login.php",cls:"cmd"},"Login form found. No input sanitisation visible on the password field.",{t:"Trying username 'admin' with a classic bypass payload...",cls:"warn"},{t:"Password: ' OR '1'='1' -- ",cls:"cmd"},"Query run by the app:","  SELECT * FROM users WHERE user='admin' AND pass='' OR '1'='1' -- '","The OR clause is always true, so the query returns the admin row regardless of password.",{t:"Authentication bypassed. Admin panel accessible.",cls:"bad"}]},
+
 {title:"Data Access",team:"red-team",scene:"network",host:"pentester@kali:~$",sub:"Top secret information located and exfiltration begins",mitre:["collect","exfil"],score:[1,0],path:ATTACK_PATH,traffic:"attack",
  act(){Exfil.show('Exfiltrating to 203.0.113.50');Exfil.run(0,70,14000)},
  lines:[{t:"Located:",cls:"warn"},"  TopSecret_MergerPlans.pdf","  ExecutiveStrategy.docx","  CustomerDatabase_Full.bak",{t:"Starting encrypted transfer to attacker host...",d:1000},"Exfiltration 70% ..."]},
