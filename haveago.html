@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Have a Go — Breach the Network</title>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/haveago.css">
+</head>
+<body class="green-team">
+<header class="top">
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 6 8v11c0 9 6 15 14 18 8-3 14-9 14-18V8z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 20l4 4 8-9" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+    <div><b id="brandName"></b><span id="brandUnit"></span></div>
+  </div>
+  <h1>Have a Go: Breach the Network</h1>
+  <div class="controls">
+    <span id="hudTimer">00:00</span>
+    <button id="leaderboardBtn">Leaderboard</button>
+    <button id="restartBtn">Restart</button>
+  </div>
+</header>
+
+<div id="timeBar"><i id="timeBarFill"></i></div>
+<div class="meta"><span id="mitreLabel">Tactics used</span><div id="mitre"></div></div>
+
+<main class="workspace">
+  <section id="stage">
+
+    <div class="scene show" id="screen-role">
+      <h2>Pick your side</h2>
+      <p class="lead">You've got about five minutes. Which side of the breach do you want to play?</p>
+      <div class="rolepick">
+        <button class="rolebtn red" id="pickRed">
+          <span class="rt">Red Team</span>
+          <small>Break into the network and steal the data before the SOC catches you.</small>
+        </button>
+        <button class="rolebtn blue" id="pickBlue">
+          <span class="rt">Blue Team</span>
+          <small>Spot the real alert and contain the breach before the data gets out.</small>
+        </button>
+      </div>
+    </div>
+
+    <!-- generic: pure narration via the terminal -->
+    <div class="scene" id="screen-narr">
+      <h2 id="narrTitle">Getting started…</h2>
+      <p id="narrSub"></p>
+    </div>
+
+    <!-- generic: explainer / debrief panel with a Continue button -->
+    <div class="scene" id="screen-info">
+      <h2 id="infoTitle"></h2>
+      <div id="infoBody" class="infobody"></div>
+      <button class="continuebtn" id="infoCta">Continue</button>
+    </div>
+
+    <!-- generic: multiple-choice -->
+    <div class="scene" id="screen-quiz">
+      <h2 id="quizTitle"></h2>
+      <div id="quizPrompt" class="lead"></div>
+      <div id="quizOptions" class="optlist"></div>
+      <p id="quizMsg" class="feedback" aria-live="polite"></p>
+    </div>
+
+    <!-- generic: multi-select checklist -->
+    <div class="scene" id="screen-checklist">
+      <h2 id="clTitle"></h2>
+      <div id="clPrompt" class="lead"></div>
+      <div id="clItems" class="cllist"></div>
+      <button class="continuebtn" id="clConfirm">Confirm selection</button>
+      <p id="clMsg" class="feedback" aria-live="polite"></p>
+    </div>
+
+    <!-- red: rules-of-engagement sign-off -->
+    <div class="scene" id="screen-consent">
+      <h2>Rules of engagement</h2>
+      <p class="lead">Before a single packet goes out, tick everything you're actually agreeing to do — nothing more.</p>
+      <div id="consentItems" class="cllist"></div>
+      <button class="continuebtn" id="consentSign">Sign agreement</button>
+      <p id="consentMsg" class="feedback" aria-live="polite"></p>
+    </div>
+
+    <!-- red: fake "LinkedOUT" profile -->
+    <div class="scene" id="screen-linkedout">
+      <h2>A staff profile turns up</h2>
+      <p class="lead">Public, and full of clues.</p>
+      <div id="profileCard" class="profilecard"></div>
+      <button class="continuebtn" id="linkedoutCta">Continue</button>
+    </div>
+
+    <div class="scene" id="screen-enum">
+      <h2>Find your way in</h2>
+      <p id="enumClue" class="lead"></p>
+      <svg id="net" viewBox="0 0 1000 420" aria-label="Network diagram"></svg>
+      <p id="enumMsg" class="feedback" aria-live="polite"></p>
+    </div>
+
+    <div class="scene" id="screen-sqli">
+      <h2>Bypass the admin login</h2>
+      <p class="lead">This login box checks your password by building a database query out of exactly what you type. Try to make the check always come out true.</p>
+      <div class="browser">
+        <div class="browser-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="url">http://intranet.northbridge-holdings.example/admin/login.php</div></div>
+        <div class="browser-body">
+          <form id="sqliForm" onsubmit="return false">
+            <h4>Admin Portal</h4>
+            <label>Username<input id="sqliUser" type="text" value="admin"></label>
+            <label>Password<input id="sqliPass" type="text" autocomplete="off" placeholder="type here…"></label>
+            <button class="loginbtn" id="sqliSubmit">Log in</button>
+            <div class="loginmsg" id="sqliMsg"></div>
+          </form>
+        </div>
+      </div>
+      <div class="credbox hidden" id="credBox"></div>
+      <button class="hintbtn" id="sqliHint">Need a hint?</button>
+    </div>
+
+    <!-- red: lateral movement drag -->
+    <div class="scene" id="screen-lateral">
+      <h2>Move laterally</h2>
+      <p id="lateralClue" class="lead"></p>
+      <div class="dragwrap">
+        <div class="draglabels"><span id="dragFrom">WEB01</span><span id="dragTo">FILE01</span></div>
+        <div class="dragtrack" id="dragTrack">
+          <div class="dragpill" id="dragPill">YAdmina / P@$$w0rd</div>
+        </div>
+      </div>
+      <p id="lateralMsg" class="feedback" aria-live="polite"></p>
+    </div>
+
+    <div class="scene" id="screen-exfil">
+      <h2>Get the data out</h2>
+      <p class="lead">Every click pushes a random chunk out. The SOC is closing in the whole time — and sometimes looks like it's about to beat you to it.</p>
+      <div class="racebars">
+        <div class="racebar"><span>Data exfiltrated</span><div class="bar"><i id="exfilRaceFill"></i></div></div>
+        <div class="racebar"><span>Blue team catching up?</span><div class="bar chase"><i id="blueChaseFill"></i></div></div>
+        <div class="racebar"><span>SOC suspicion</span><div class="bar susp"><i id="suspFill"></i></div></div>
+      </div>
+      <button class="pushbtn" id="pushBtn">Push the transfer</button>
+    </div>
+
+    <!-- blue: alert triage (the live SOC feed itself is the persistent side panel) -->
+    <div class="scene" id="screen-alertsoc">
+      <h2>Which alert is the real breach?</h2>
+      <p class="lead">Watch the feed on the right — most of it is normal noise. When the real alert lands, pick it out below.</p>
+      <div id="alertList"></div>
+      <p id="alertMsg" class="feedback" aria-live="polite"></p>
+    </div>
+
+    <!-- blue: packet trace click-through -->
+    <div class="scene" id="screen-trace">
+      <h2>Follow the trail</h2>
+      <p class="lead">Step through the capture one packet at a time. Anything worth logging gets added to your notes as you click it — keep going until you find where the data actually left.</p>
+      <div class="pkttablewrap">
+        <table class="pkttable">
+          <thead><tr><th>Time</th><th>Src</th><th>Dst</th><th>Proto</th><th>Len</th><th>Info</th></tr></thead>
+          <tbody id="pktBody"></tbody>
+        </table>
+      </div>
+      <button class="continuebtn" id="pktNextBtn" style="margin-top:12px">Next packet ▸</button>
+      <p id="traceMsg" class="feedback" aria-live="polite"></p>
+    </div>
+
+    <div class="scene" id="screen-contain">
+      <h2>Shut it down</h2>
+      <p class="lead">You've confirmed the incident. The transfer is still running — pick the action that actually stops it.</p>
+      <div class="racebars">
+        <div class="racebar"><span>Data exfiltrated</span><div class="bar"><i id="exfilBlueFill"></i></div></div>
+      </div>
+      <div id="containChoices"></div>
+      <p id="containMsg" class="feedback" aria-live="polite"></p>
+    </div>
+
+    <div class="scene" id="screen-end">
+      <h2 id="endTitle"></h2>
+      <p id="endDetail" class="lead"></p>
+      <div id="endTags" class="endtags"></div>
+      <div class="scoreentry">
+        <input id="nameInput" maxlength="16" placeholder="Enter your name for the leaderboard">
+        <button id="saveScore">Save score</button>
+      </div>
+      <button class="playagain" id="playAgain">Play again</button>
+    </div>
+
+    <div class="scene" id="screen-leaderboard">
+      <h2>Leaderboard</h2>
+      <div class="lbgrid">
+        <div><h3>Red Team — fastest breach</h3><table id="lbRed"><thead><tr><th>#</th><th>Name</th><th>Time</th></tr></thead><tbody></tbody></table></div>
+        <div><h3>Blue Team — fastest containment</h3><table id="lbBlue"><thead><tr><th>#</th><th>Name</th><th>Time</th></tr></thead><tbody></tbody></table></div>
+      </div>
+      <button class="playagain" id="lbBack">Back</button>
+    </div>
+
+  </section>
+
+  <section id="terminalWrap">
+    <!-- Red team: plain terminal -->
+    <div id="termPane">
+      <div class="termbar"><i></i><i></i><i></i><span>terminal</span></div>
+      <div id="terminal"></div>
+    </div>
+    <!-- Blue team: persistent SOC feed + command line, replaces the terminal
+         entirely and keeps running for the whole Blue playthrough -->
+    <div id="socPane" class="hidden">
+      <div class="termbar"><i></i><i></i><i></i><span>SOC — live feed</span></div>
+      <div id="socMock"></div>
+      <div class="termbar socbar2"><i></i><i></i><i></i><span>command line</span></div>
+      <div id="miniTerm"></div>
+    </div>
+    <div class="notes" id="notesPanel">
+      <h4>Notes</h4>
+      <ul id="notesList"></ul>
+    </div>
+  </section>
+</main>
+
+<script src="js/haveago-config.js"></script>
+<script src="js/terminal.js"></script>
+<script src="js/network.js"></script>
+<script src="js/haveago.js"></script>
+</body>
+</html>

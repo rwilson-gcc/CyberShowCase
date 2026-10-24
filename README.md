@@ -1,106 +1,150 @@
 # Cyber Security Lifecycle Demonstration
 
-An interactive, self-contained HTML/CSS/JS demo that walks through a full
-penetration test lifecycle — from board authorisation through to SOC
-detection, containment and lessons learned. Built for classroom and
-open-day use at Glasgow Clyde College.
+Three self-contained, no-build, no-backend HTML/CSS/JS pages for Glasgow
+Clyde College's Computing & Cybersecurity department:
 
-No external dependencies, no build step, no backend. Open `index.html`
-in a browser or drop the folder onto any static web host.
+- **`index.html`** — a landing page: pick Showcase or Have a Go.
+- **`showcase.html`** — a narrated walkthrough of a full penetration
+  test, from board authorisation to lessons learned. For a screen
+  running unattended or a presenter-led walkthrough.
+- **`haveago.html`** — a short, hands-on "have a go" challenge for a
+  competition stand or open day. The visitor plays Red Team (break in
+  and steal the data) or Blue Team (spot the breach and contain it)
+  against the clock, with a local leaderboard.
+
+All three run entirely in the browser with no dependencies. Open
+`index.html` to choose, or link straight to either page directly.
 
 ## File structure
 
 ```
 cyber-showcase/
-├── index.html          Page structure and all scene markup
+├── index.html            Landing page — choose Showcase or Have a Go
+├── showcase.html         The narrated showcase
+├── haveago.html          The "have a go" stand challenge
 ├── css/
-│   └── styles.css       All styling, colour themes, animations
+│   ├── styles.css          Shared base styles — used by all three pages
+│   └── haveago.css         Styles specific to haveago.html
 └── js/
-    ├── config.js         Branding, timing, and every stage's content — edit this first
-    ├── terminal.js        Typewriter effect for the terminal panel
-    ├── network.js          SVG network diagram: nodes, links, packet animation
-    ├── panels.js            Approval screen, MITRE matrix, SIEM dashboard,
-    │                         analyst panels, exfiltration bar, SQL injection scene
-    ├── timeline.js           Stage progress dots at the bottom of the page
-    └── app.js                Wires everything together: stage sequencing,
-                                scoring, Automated/Live mode, Back/Next/jump
+    ├── config.js            showcase.html: branding, timing, all 12 stages
+    ├── app.js               showcase.html: stage sequencing, modes, scoring
+    ├── panels.js             showcase.html: SIEM, approval, analysts, SQLi scene
+    ├── timeline.js            showcase.html: stage progress dots
+    ├── terminal.js          Shared: terminal typing effect — used by showcase and haveago
+    ├── network.js           Shared: SVG network diagram — used by showcase and haveago
+    ├── haveago-config.js    haveago.html: wording, clues, timings, leaderboard
+    └── haveago.js           haveago.html: role select, race logic, scoring
 ```
 
-Scripts must load in the order listed in `index.html` (config, terminal,
-network, panels, timeline, app) — later files depend on functions defined
-in earlier ones.
+`index.html` is just markup and a few inline styles — it loads no
+scripts. `showcase.html` and `haveago.html` each load their own scripts
+in dependency order — see the `<script>` tags near the bottom of each
+file. `terminal.js` and `network.js` are shared by both and must load
+before `app.js` / `haveago.js`, which depend on them.
 
 ## Running it
 
-**Quickest:** double-click `index.html`. Everything is self-contained, so
-it works straight off disk.
+**Quickest:** double-click `index.html` and pick a page from there, or
+open `showcase.html` / `haveago.html` directly. All three work straight
+off disk. One caveat: `haveago.html`'s leaderboard uses the browser's
+local storage, which some browsers restrict when a page is opened as a
+`file://` URL rather than served over HTTP. If scores aren't saving,
+serve the folder instead — e.g. `python -m http.server` from inside
+`cyber-showcase/`, then open `http://localhost:8000/`.
 
 **GitHub Pages:** copy the contents of `cyber-showcase/` into the repo
-root (or wherever Pages is configured to serve from), so `index.html`
-sits at the site's root URL.
+root (or wherever Pages is configured to serve from). The landing page
+will be served at the site's root URL.
 
 **Self-hosted / Proxmox:** copy the whole folder onto any static web
-server (nginx, Apache, Caddy). No server-side processing is required.
+server (nginx, Apache, Caddy). No server-side processing required, and
+this sidesteps the local-storage caveat above.
 
-## Using the demo
+## showcase.html — the showcase
 
-- **Automated mode** advances through all twelve stages on its own, with
-  a configurable dwell time per stage. When it reaches the last stage it
-  waits out the dwell time, then loops back to the start automatically —
-  it will run indefinitely until you stop it.
-- **Live mode** hands control to the presenter:
-  - **Next** / **Back** step forward or backward one stage.
-  - Clicking a numbered dot in the stage tracker at the bottom jumps
-    straight to that stage.
-  - Right arrow / space = Next, left arrow = Back.
-- **F** or the Fullscreen button toggles presentation mode, which hides
-  the page title and enlarges the terminal and stage heading.
+- **Automated mode** advances through all twelve stages on its own, on a
+  configurable dwell time. After the last stage it loops back to the
+  start and keeps running until stopped.
+- **Live mode** hands control to the presenter: **Next** / **Back** to
+  step one stage at a time, or click a numbered dot in the stage tracker
+  to jump straight to that stage. Right arrow / space = Next, left arrow
+  = Back.
+- **F** or the Fullscreen button toggles presentation mode.
 
-Switching between Automated and Live, or changing it mid-run, resets the
-demo back to "Ready" — press Start Demo again to begin.
+Every stage render — via Next, Back, a direct jump, or the automated
+sequence — starts that stage fresh (terminal retyped, network diagram,
+exfiltration bar, SIEM panel and login form all reset first), and the
+score is recalculated from scratch for wherever you land, so jumping
+around never double-counts. A stage only shows what its own script
+reveals, not the accumulated history of stages you skipped past.
 
-Every time a stage is shown — whether by Next, Back, a direct jump, or
-the normal automated sequence — it's rendered fresh from a blank slate
-(terminal retyped, network diagram, exfiltration bar, SIEM panel and
-login form all reset first). Scores are recalculated from scratch based
-on which stage you're viewing, so jumping around the timeline never
-double-counts or drops points. Jumping or going back does **not** replay
-every earlier stage's effect on the network diagram — a stage only shows
-what its own script reveals, not the accumulated history of stages you
-skipped.
+**Stages:** Authorisation → Reconnaissance → Enumeration → Network
+Mapping → Initial Access → Web Exploitation (SQL injection) → Data
+Access → Alert Triggered → SOC Analysis → Containment → Forensics →
+Lessons Learned.
 
-## Stages
+**Customising:** almost everything lives in `js/config.js` — `BRAND`
+(college name, accent colour), `AUTO_SECONDS` (dwell time), and `STAGES`
+(each stage's title, team colour, MITRE tag, scoring, terminal lines and
+any special behaviour).
 
-1. Authorisation — CEO, CISO and Board sign off before testing begins
-2. Reconnaissance — OSINT gathering (WHOIS, subdomains, staff emails)
-3. Enumeration — live fake `nmap` scan against the internal network
-4. Network Mapping — trust relationships and a candidate attack path
-5. Initial Access — VPN access and privilege escalation
-6. Web Exploitation — a simple SQL injection bypasses the WEB01 admin login
-7. Data Access — top-secret files located, exfiltration begins
-8. Alert Triggered — the SIEM fires on the outbound transfer
-9. SOC Analysis — analysts correlate logs and confirm the incident
-10. Containment — firewall rules block the attacker, hosts isolated
-11. Forensics — timeline reconstruction and evidence preservation
-12. Lessons Learned — what worked, what to improve, report to the Board
+## haveago.html — the stand challenge
 
-## Customising
+Visitor picks a side, then plays through a full kill chain — a mix of
+narration, short multiple-choice and multi-select questions (each with
+an explanation, right or wrong), and hands-on interactive moments. A
+MITRE ATT&CK tag strip across the top lights up live as each tactic is
+reached.
 
-Almost everything you'd want to change lives in `js/config.js`:
+The right-hand panel changes with the side you pick. Red Team keeps the
+plain terminal. Blue Team replaces it entirely with a persistent SOC
+feed and a mini command line — both run for the whole shift, not just
+during one step, so the "SOC centre" feel carries through briefing,
+quizzes and containment alike.
 
-- `BRAND` — college name, department name, accent colour
-- `AUTO_SECONDS` — dwell time per stage in Automated mode
-- `STAGES` — the full script: each stage's title, team colour, MITRE
-  tactic tags, scoring, network path, terminal lines, and any special
-  behaviour (`act()`)
+Red Team plays through recon (including a fake LinkedOUT profile),
+discovery with a live dirbuster-style scan, credential access, a
+drag-to-connect lateral movement puzzle, and a seesawing exfiltration
+race against the SOC. Blue Team opens on that live feed ticking over
+with routine noise, then the real alert drops into it; a log-correlation
+step types search commands into the mini command line; an interactive
+packet-trace click-through logs each host the attacker actually touched
+(VPN login, the WEB01 admin login, the FILE01 SMB session, and finally
+the DB01 exfil) to Notes as you click through it, so the next
+checklist — confirming which hosts are affected — is answerable from
+what you just found, not from having played Red first; then an
+escalation decision, containment, a forensics quiz, and a closing
+recommendations checklist. A running Notes panel (shared layout, under
+whichever side panel is showing) fills itself in as key facts are
+gathered on both sides, so the player can scroll back through what
+they've found.
 
-The organisation name ("Northbridge Holdings plc"), IP ranges
-(`10.10.10.0/24`, documentation-range `203.0.113.x` for the attacker),
-and all "stolen" filenames are fictional and don't correspond to any
-real network.
+Both paths end on a result screen with elapsed time and the full list
+of MITRE tactics touched. A win lets the visitor save their name to a
+local leaderboard (separate fastest-time boards per team), viewable any
+time via the header's Leaderboard button. A configurable hard time
+limit (default just over five minutes) and a shrinking bar at the top
+stop a stuck player from blocking the queue. Restarting (or timing out)
+fully clears the run's state — elapsed time, notes, exfil/suspicion
+meters — so the next player starts from zero.
+
+**Customising:** `js/haveago-config.js` holds the whole sequence as two
+arrays (`redSteps`, `blueSteps`). Reorder, add or remove steps by
+editing those arrays; everything else — wording, the MITRE tag list,
+decoy alerts, containment notes, and every timing value — is also in
+that file.
+
+## Fictional data
+
+The organisation name ("Northbridge Holdings plc"), internal IP range
+(`10.10.10.0/24`), the attacker's documentation-range IP
+(`203.0.113.x`), all "stolen" filenames, and the fictional "LinkedOUT"
+profile and staff names are made up and don't correspond to any real
+network, service, or person.
 
 ## Browser support
 
 Modern evergreen browsers (Chrome, Edge, Firefox, Safari). Uses native
-SVG, CSS custom properties and the Fullscreen API — no polyfills
-included. `prefers-reduced-motion` is respected throughout.
+SVG, CSS custom properties, `localStorage` (haveago.html) and the
+Fullscreen API — no polyfills included. `prefers-reduced-motion` is
+respected throughout.

@@ -3,100 +3,122 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Cyber Security Lifecycle Demonstration</title>
-<link rel="stylesheet" href="css/styles.css?v=2">
+<title>Cyber Security Lifecycle — Glasgow Clyde College</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  body{display:flex;flex-direction:column;min-height:100vh}
+  main.landing{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center}
+  main.landing h1{font-size:2rem;margin:0 0 8px;color:var(--acc)}
+  main.landing .sub{color:#cde;max-width:520px;margin:0 0 32px}
+  .cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;max-width:860px}
+  .card{flex:1;min-width:260px;max-width:380px;padding:26px;border-radius:14px;border:2px solid var(--line);background:rgba(0,0,0,.3);color:#fff;text-decoration:none;display:flex;flex-direction:column;gap:10px;text-align:left;transition:.2s}
+  .card:hover{border-color:var(--acc);transform:translateY(-2px)}
+  .card h2{margin:0;font-size:1.3rem}
+  .card p{margin:0;color:#bcd;line-height:1.5;font-size:.92rem}
+  .card .tag{align-self:flex-start;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:12px;background:rgba(255,255,255,.08);color:#9ab}
+  footer{text-align:center;padding:14px;color:#789;font-size:.8rem}
+
+  /* ---- decorative SOC + terminal mockup ---- */
+  .peek{width:100%;max-width:860px;margin:36px auto 0;display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+  .peekcard{flex:1;min-width:280px;max-width:420px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.3);overflow:hidden;text-align:left}
+  .peekhead{display:flex;align-items:center;gap:6px;padding:8px 12px;background:rgba(0,0,0,.35);font-family:var(--mono);font-size:.78rem;color:#9ab}
+  .peekhead i{width:9px;height:9px;border-radius:50%;background:#555}
+  .peekhead span{margin-left:6px}
+  .siemmini{padding:10px 12px}
+  .siemmini .row{display:flex;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:.74rem;padding:4px 0;border-bottom:1px solid #222;color:#8cf}
+  .siemmini .row b{color:#ff6b6b;font-weight:700}
+  .siemmini .row.high b{color:#ff6b6b}
+  .siemmini .row.med b{color:#ffb74d}
+  .siemmini .chartrow{display:flex;align-items:flex-end;gap:2px;height:46px;margin:8px 0 2px}
+  .siemmini .chartrow i{flex:1;background:#4b8fd6;border-radius:1px}
+  .termmini{background:#000;color:#00ff66;font-family:var(--mono);font-size:.78rem;padding:10px 12px;min-height:148px;white-space:pre-wrap}
+  .termmini .cur{display:inline-block;width:7px;height:1em;background:#00ff66;vertical-align:text-bottom;animation:tblink 1s steps(1) infinite}
+  @keyframes tblink{50%{opacity:0}}
+  @media(prefers-reduced-motion:reduce){.termmini .cur{animation:none}}
+</style>
 </head>
 <body class="green-team">
 <header class="top">
   <div class="brand">
     <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 6 8v11c0 9 6 15 14 18 8-3 14-9 14-18V8z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 20l4 4 8-9" fill="none" stroke="currentColor" stroke-width="3"/></svg>
-    <div><b id="brandName"></b><span id="brandUnit"></span></div>
-  </div>
-  <h1>Cyber Security Lifecycle Demonstration</h1>
-  <div class="controls">
-    <select id="modeSelect" aria-label="Mode"><option value="automated">Automated</option><option value="live">Live</option></select>
-    <button id="startBtn">Start Demo</button>
-    <button id="backBtn" disabled>Back</button>
-    <button id="nextBtn" disabled>Next Stage</button>
-    <button id="fullscreenBtn">Fullscreen</button>
+    <div><b>Glasgow Clyde College</b><span>Computing &amp; Cybersecurity</span></div>
   </div>
 </header>
 
-<section class="meta">
-  <div class="scoreboard"><span>Red team <b id="redScore">0</b></span><span>Blue team <b id="blueScore">0</b></span></div>
-  <div id="countdown">Choose a mode and press Start Demo</div>
-  <div id="mitre" aria-label="MITRE ATT&CK matrix"></div>
-</section>
+<main class="landing">
+  <h1>Cyber Security Lifecycle</h1>
+  <p class="sub">Two ways to see how a penetration test really plays out, from board sign-off to lessons learned.</p>
+  <div class="cards">
+    <a class="card" href="showcase.html">
+      <span class="tag">Watch</span>
+      <h2>Showcase</h2>
+      <p>A full narrated walkthrough of a pentest — recon, exploitation, SOC detection and containment. Runs itself in Automated mode, or step through it live with a presenter.</p>
+    </a>
+    <a class="card" href="haveago.html">
+      <span class="tag">Play</span>
+      <h2>Have a Go</h2>
+      <p>A two-minute, hands-on challenge for a stand or open day. Pick Red Team to breach the network, or Blue Team to catch and contain them — against the clock, with a leaderboard.</p>
+    </a>
+  </div>
 
-<div id="stageTitle"><h2>Ready</h2><p id="stageSub">Authorised penetration test against Northbridge Holdings plc</p></div>
-
-<main class="workspace">
-  <section id="stage">
-    <div class="scene" id="scene-approval">
-      <h3>Penetration test authorisation</h3>
-      <ul class="scope">
-        <li>Scope: external perimeter and 10.10.10.0/24 server network</li>
-        <li>Window: out of hours, with SOC on standby</li>
-        <li>Out of scope: production payment systems, social engineering of staff</li>
-        <li>Stop condition: any sign of service degradation</li>
-      </ul>
-      <div id="signers"></div>
-      <div id="stamp">AUTHORISED</div>
-    </div>
-
-    <div class="scene" id="scene-network">
-      <svg id="net" viewBox="0 0 1000 420" aria-label="Network diagram"></svg>
-      <div id="exfil" class="hidden">
-        <span id="exfilLabel">Exfiltrating</span>
-        <div class="bar"><i id="exfilFill"></i></div>
-        <b id="exfilPct">0%</b>
+  <div class="peek" aria-hidden="true">
+    <div class="peekcard">
+      <div class="peekhead"><i></i><i></i><i></i><span>SOC — Search &amp; Reporting</span></div>
+      <div class="siemmini">
+        <div class="chartrow" id="peekChart"></div>
+        <div class="row high"><span>Outbound transfer 4.2 GB → 203.0.113.50</span><b>High</b></div>
+        <div class="row med"><span>Admin login from new VPN address</span><b>Med</b></div>
+        <div class="row"><span>Scheduled backup completed: FILE01</span><span>Info</span></div>
       </div>
     </div>
-
-    <div class="scene" id="scene-sqli">
-      <div class="browser">
-        <div class="browser-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="url" id="sqliUrl">http://intranet.northbridge-holdings.example/admin/login.php</div></div>
-        <div class="browser-body">
-          <form class="loginform" id="loginForm" onsubmit="return false">
-            <h4>Admin Portal</h4>
-            <label>Username<input id="sqliUser" type="text" readonly></label>
-            <label>Password<input id="sqliPass" type="text" readonly></label>
-            <button class="loginbtn" disabled>Log in</button>
-            <div class="loginmsg" id="loginMsg"></div>
-          </form>
-          <div class="adminpanel hidden" id="adminPanel">
-            <h4>Welcome, admin</h4>
-            <ul><li>Users: 1,204</li><li>Orders: 38,902</li><li>Backups: nightly, last run 02:00</li></ul>
-            <div class="flagbox">Admin session established — no MFA on this panel.</div>
-          </div>
-        </div>
-      </div>
+    <div class="peekcard">
+      <div class="peekhead"><i></i><i></i><i></i><span>pentester@kali:~$</span></div>
+      <div class="termmini" id="peekTerm"></div>
     </div>
-
-    <div class="scene" id="scene-siem">
-      <div class="siem">
-        <div class="siem-bar"><b>SIEM</b><span>Search &amp; Reporting</span><em id="siemAlert" class="hidden">ALERT</em></div>
-        <code id="siemQuery">index=network sourcetype=firewall | timechart count by dest_ip</code>
-        <div id="chart" aria-label="Events per minute"></div>
-        <table><thead><tr><th>Time</th><th>Severity</th><th>Event</th></tr></thead><tbody id="events"></tbody></table>
-      </div>
-      <div id="analysts"></div>
-    </div>
-  </section>
-
-  <section id="terminalWrap">
-    <div class="termbar"><i></i><i></i><i></i><span id="termHost">terminal</span></div>
-    <div id="terminal"></div>
-  </section>
+  </div>
 </main>
 
-<nav id="timeline" aria-label="Stage progress"></nav>
+<footer>Fictional organisation and IP ranges — for education and demonstration only.</footer>
 
-<script src="js/config.js?v=2"></script>
-<script src="js/terminal.js?v=2"></script>
-<script src="js/network.js?v=2"></script>
-<script src="js/panels.js?v=2"></script>
-<script src="js/timeline.js?v=2"></script>
-<script src="js/app.js?v=2"></script>
-</body>
-</html>
+<script>
+(function(){
+  // Purely decorative — a quick SIEM-bar flicker and a looping typed line,
+  // just so the landing page isn't a flat wall of text.
+  var bars=document.getElementById('peekChart');
+  if(bars){
+    var h='';for(var i=0;i<28;i++)h+='<i style="height:'+(8+Math.random()*34)+'px"></i>';
+    bars.innerHTML=h;
+    setInterval(function(){
+      var all=bars.children;
+      var n=all[Math.floor(Math.random()*all.length)];
+      if(n)n.style.height=(8+Math.random()*34)+'px';
+    },450);
+  }
+  var term=document.getElementById('peekTerm');
+  if(term){
+    var lines=[
+      "$ whois northbridge-holdings.example",
+      "Registrant: Northbridge Holdings plc",
+      "$ nmap -sV 10.10.10.0/24",
+      "3 hosts up, 6 ports open",
+      "$ fw block ip 203.0.113.50",
+      "Rule added: DENY 203.0.113.50 any"
+    ];
+    var li=0,ci=0,buf=[];
+    function tick(){
+      if(!document.body.isConnected)return;
+      if(li>=lines.length){buf=[];li=0;ci=0;term.textContent='';setTimeout(tick,900);return}
+      var line=lines[li];
+      if(ci<=line.length){
+        buf[li]=line.slice(0,ci);
+        term.innerHTML=buf.join('\n')+'<span class="cur"></span>';
+        ci++;setTimeout(tick,22);
+      }else{
+        li++;ci=0;setTimeout(tick,350);
+      }
+    }
+    tick();
+  }
+})();
+</script>
+</body></html>

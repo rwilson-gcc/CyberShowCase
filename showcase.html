@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cyber Security Lifecycle Demonstration</title>
+<link rel="stylesheet" href="css/styles.css?v=2">
+</head>
+<body class="green-team">
+<header class="top">
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 6 8v11c0 9 6 15 14 18 8-3 14-9 14-18V8z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 20l4 4 8-9" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+    <div><b id="brandName"></b><span id="brandUnit"></span></div>
+  </div>
+  <h1>Cyber Security Lifecycle Demonstration</h1>
+  <div class="controls">
+    <select id="modeSelect" aria-label="Mode"><option value="automated">Automated</option><option value="live">Live</option></select>
+    <button id="startBtn">Start Demo</button>
+    <button id="backBtn" disabled>Back</button>
+    <button id="nextBtn" disabled>Next Stage</button>
+    <button id="fullscreenBtn">Fullscreen</button>
+  </div>
+</header>
+
+<section class="meta">
+  <div class="scoreboard"><span>Red team <b id="redScore">0</b></span><span>Blue team <b id="blueScore">0</b></span></div>
+  <div id="countdown">Choose a mode and press Start Demo</div>
+  <div id="mitre" aria-label="MITRE ATT&CK matrix"></div>
+</section>
+
+<div id="stageTitle"><h2>Ready</h2><p id="stageSub">Authorised penetration test against Northbridge Holdings plc</p></div>
+
+<main class="workspace">
+  <section id="stage">
+    <div class="scene" id="scene-approval">
+      <h3>Penetration test authorisation</h3>
+      <ul class="scope">
+        <li>Scope: external perimeter and 10.10.10.0/24 server network</li>
+        <li>Window: out of hours, with SOC on standby</li>
+        <li>Out of scope: production payment systems, social engineering of staff</li>
+        <li>Stop condition: any sign of service degradation</li>
+      </ul>
+      <div id="signers"></div>
+      <div id="stamp">AUTHORISED</div>
+    </div>
+
+    <div class="scene" id="scene-network">
+      <svg id="net" viewBox="0 0 1000 420" aria-label="Network diagram"></svg>
+      <div id="exfil" class="hidden">
+        <span id="exfilLabel">Exfiltrating</span>
+        <div class="bar"><i id="exfilFill"></i></div>
+        <b id="exfilPct">0%</b>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-sqli">
+      <div class="browser">
+        <div class="browser-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="url" id="sqliUrl">http://intranet.northbridge-holdings.example/admin/login.php</div></div>
+        <div class="browser-body">
+          <form class="loginform" id="loginForm" onsubmit="return false">
+            <h4>Admin Portal</h4>
+            <label>Username<input id="sqliUser" type="text" readonly></label>
+            <label>Password<input id="sqliPass" type="text" readonly></label>
+            <button class="loginbtn" disabled>Log in</button>
+            <div class="loginmsg" id="loginMsg"></div>
+          </form>
+          <div class="adminpanel hidden" id="adminPanel">
+            <h4>Welcome, admin</h4>
+            <ul><li>Users: 1,204</li><li>Orders: 38,902</li><li>Backups: nightly, last run 02:00</li></ul>
+            <div class="flagbox">Admin session established — no MFA on this panel.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene" id="scene-siem">
+      <div class="siem">
+        <div class="siem-bar"><b>SIEM</b><span>Search &amp; Reporting</span><em id="siemAlert" class="hidden">ALERT</em></div>
+        <code id="siemQuery">index=network sourcetype=firewall | timechart count by dest_ip</code>
+        <div id="chart" aria-label="Events per minute"></div>
+        <table><thead><tr><th>Time</th><th>Severity</th><th>Event</th></tr></thead><tbody id="events"></tbody></table>
+      </div>
+      <div id="analysts"></div>
+    </div>
+  </section>
+
+  <section id="terminalWrap">
+    <div class="termbar"><i></i><i></i><i></i><span id="termHost">terminal</span></div>
+    <div id="terminal"></div>
+  </section>
+</main>
+
+<nav id="timeline" aria-label="Stage progress"></nav>
+
+<script src="js/config.js?v=2"></script>
+<script src="js/terminal.js?v=2"></script>
+<script src="js/network.js?v=2"></script>
+<script src="js/panels.js?v=2"></script>
+<script src="js/timeline.js?v=2"></script>
+<script src="js/app.js?v=2"></script>
+</body>
+</html>
